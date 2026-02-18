@@ -275,8 +275,10 @@
       <div class="brand">DealOS for Realtors</div>
       <nav class="nav">
         <a href="#offer">Offer</a>
-        <a href="#model">Business model</a>
+        <a href="#signup">Deliverables</a>
         <a href="#pricing">Pricing</a>
+        <a href="#money">Money use</a>
+        <a href="#backend">Backend</a>
         <a href="#next">Start</a>
       </nav>
     </div>
@@ -327,31 +329,58 @@
       </div>
     </section>
 
+    <section class="section" id="signup">
+      <h2>Exactly what you get when you sign up</h2>
+      <p class="subtle">No vague promises. Here is the concrete delivery sequence and assets.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>First 48 hours (Setup Delivery)</h3>
+          <ul>
+            <li>Lead-response playbook customized to your market + tone</li>
+            <li>7/14/30-day follow-up flows (SMS + email templates)</li>
+            <li>Transaction deadline checklist with escalation rules</li>
+            <li>Priority dashboard: hot leads, next actions, at-risk deals</li>
+            <li>Quick training video + SOP doc for daily usage</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Every month (Retainer Delivery)</h3>
+          <ul>
+            <li>Weekly workflow tune-up and reliability checks</li>
+            <li>Lead follow-up performance review + script improvements</li>
+            <li>Deadline miss prevention audit</li>
+            <li>One new automation or workflow improvement per month</li>
+            <li>Monthly report: response speed, follow-up coverage, risk flags</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="model">
       <h2>Business model (clear and scalable)</h2>
-      <p class="subtle">Designed to beat “DIY setup” by combining recurring outcomes + template leverage.</p>
+      <p class="subtle">Designed to beat DIY by combining managed outcomes now with product leverage later.</p>
       <div class="model">
         <h3>Phase 1: Productized Service (cash now)</h3>
         <ul>
-          <li><strong>Setup fee</strong> covers implementation and initial customization</li>
-          <li><strong>Monthly retainer</strong> covers weekly operation and tuning</li>
-          <li>Goal: predictable MRR from 5–10 agents before adding software layer</li>
+          <li><strong>Setup fee</strong> funds implementation and onboarding</li>
+          <li><strong>Monthly retainer</strong> funds weekly operation + accountability</li>
+          <li>Target: 10 clients × $199/mo = $1,990 MRR base</li>
         </ul>
       </div>
       <div class="model">
-        <h3>Phase 2: Vertical Toolkit (scale)</h3>
+        <h3>Phase 2: Team Kits (scale margin)</h3>
         <ul>
-          <li>Convert repeated workflows into packaged templates/checklists</li>
-          <li>License “DealOS playbooks” to broker teams as add-on</li>
-          <li>Use templates to reduce delivery time and increase margin</li>
+          <li>Package repeated playbooks into brokerage-ready kits</li>
+          <li>License templates + training to team leads</li>
+          <li>Increase margin via repeatable deployment</li>
         </ul>
       </div>
       <div class="model">
-        <h3>Phase 3: Lightweight SaaS Layer (optional)</h3>
+        <h3>Phase 3: SaaS Layer (scale revenue)</h3>
         <ul>
-          <li>Unified deadline board + follow-up health score</li>
-          <li>Escalation engine + weekly operational report</li>
-          <li>Hybrid model: software subscription + managed operations</li>
+          <li>Deal health score + deadline risk engine</li>
+          <li>Automated weekly reporting for teams</li>
+          <li>Hybrid model: software subscription + managed ops</li>
         </ul>
       </div>
     </section>
@@ -390,6 +419,58 @@
             <li>Higher-volume workflow tuning</li>
           </ul>
         </article>
+      </div>
+    </section>
+
+    <section class="section" id="money">
+      <h2>Where your money goes</h2>
+      <p class="subtle">Transparent breakdown so you know exactly what you’re paying for.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>Setup fee allocation</h3>
+          <ul>
+            <li><strong>40%</strong> workflow architecture + customization</li>
+            <li><strong>25%</strong> implementation + QA testing</li>
+            <li><strong>20%</strong> onboarding docs + training handoff</li>
+            <li><strong>15%</strong> tooling, integrations, and monitoring setup</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Monthly retainer allocation</h3>
+          <ul>
+            <li><strong>45%</strong> weekly operations and support</li>
+            <li><strong>25%</strong> optimization and prompt/workflow tuning</li>
+            <li><strong>20%</strong> uptime checks + backup/reliability tasks</li>
+            <li><strong>10%</strong> roadmap improvements and reporting</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="backend">
+      <h2>Backend plan (already mapped)</h2>
+      <p class="subtle">We’re building a real backend so this evolves from service into software, not just manual ops.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>MVP backend stack</h3>
+          <ul>
+            <li>API: Node.js + Fastify</li>
+            <li>Database: Postgres (Neon/Supabase)</li>
+            <li>Auth: magic link + role-based access (agent/team/admin)</li>
+            <li>Payments: Stripe subscriptions + webhook sync</li>
+            <li>Queue: background jobs for reminders/escalations</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>MVP endpoints</h3>
+          <ul>
+            <li><span class="mono">POST /api/intake</span> — onboarding data capture</li>
+            <li><span class="mono">POST /api/leads</span> — new lead ingestion + scoring</li>
+            <li><span class="mono">POST /api/deals/:id/events</span> — milestone updates</li>
+            <li><span class="mono">POST /api/escalations/run</span> — nudge/hard-alarm engine</li>
+            <li><span class="mono">POST /api/stripe/webhook</span> — billing state sync</li>
+          </ul>
+        </div>
       </div>
     </section>
 
