@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inbox Invaders</title>
+  <style>
+    :root{
+      --bg:#070b17;
+      --panel:#0e1630;
+      --text:#e9efff;
+      --muted:#9fb3e8;
+      --accent:#7aa2ff;
+      --danger:#ff5d8f;
+      --good:#7cf6ad;
+      --gold:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 20% 10%, #1b2b63 0%, transparent 35%),
+        radial-gradient(circle at 80% 0%, #3f1552 0%, transparent 30%),
+        var(--bg);
+      display:grid;
+      place-items:center;
+      min-height:100vh;
+      padding:28px 16px;
+    }
+    .wrap{ width:min(860px, 100%); text-align:center; }
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(28px, 4vw, 42px);
+      letter-spacing:.4px;
+      text-shadow:0 0 16px rgba(122,162,255,.55);
+    }
+    .sub{ margin:0 0 14px; color:var(--muted); font-size:14px; }
+    .hud{
+      width:720px; max-width:100%; margin:0 auto 10px;
+      display:flex; justify-content:space-between; gap:8px;
+      color:#cfe0ff; font-weight:600; font-size:13px;
+      opacity:.95;
+    }
+    .chip{
+      background:linear-gradient(180deg, #1a2551, #111a38);
+      border:1px solid #314582;
+      border-radius:999px; padding:6px 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 14px rgba(92,130,255,.22);
+    }
+    .frame{
+      position:relative;
+      display:inline-block;
+      border-radius:16px;
+      padding:10px;
+      background:linear-gradient(135deg, rgba(126,160,255,.26), rgba(255,93,143,.2));
+      box-shadow:0 0 40px rgba(73,123,255,.3), 0 16px 50px rgba(0,0,0,.45);
+    }
+    canvas{
+      width:720px;
+      max-width:100%;
+      height:auto;
+      border-radius:12px;
+      border:1px solid #2b3f7c;
+      background:linear-gradient(#0c1330, #050915 65%);
+      display:block;
+    }
+    .hint{ opacity:.9; margin-top:10px; font-size:14px; color:#b5c7f5; }
+    .hint kbd{background:#18244e;border:1px solid #2f458a;border-bottom-color:#4062bb;padding:1px 6px;border-radius:6px;color:#dce8ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>📥 Inbox Invaders</h1>
+    <p class="sub">Your inbox is attacking your focus. Defend your sanity.</p>
+
+    <div class="hud">
+      <div class="chip">Theme: Cosmic Office Noir</div>
+      <div class="chip" id="wave">Wave: 1</div>
+      <div class="chip" id="status">Defend your focus time.</div>
+    </div>
+
+    <div class="frame">
+      <canvas id="game" width="720" height="480"></canvas>
+    </div>
+
+    <div class="hint">
+      Move: <kbd>←</kbd> <kbd>→</kbd> or <kbd>A</kbd>/<kbd>D</kbd> • Shoot: <kbd>Space</kbd> • Restart: <kbd>R</kbd>
+    </div>
+  </div>
+
+<script>
+const c = document.getElementById('game');
+const ctx = c.getContext('2d');
+const statusEl = document.getElementById('status');
+const waveEl = document.getElementById('wave');
+
+let keys = {}, bullets = [], enemies = [], drops = [], score = 0, lives = 3, tick = 0, over = false;
+let wave = 1;
+const player = { x: c.width/2 - 22, y: c.height - 45, w: 44, h: 20, speed: 6, cooldown: 0 };
+const labels = ["Newsletter","Ping","Urgent?","Reminder","Invoice","Follow-up","FYI"];
+const stars = Array.from({length: 100}, () => ({ x: Math.random()*c.width, y: Math.random()*c.height, z: Math.random()*1.2 + .2 }));
+
+function spawnWave(){
+  enemies = [];
+  const rows = 3 + Math.floor((wave-1)/2);
+  const cols = 8;
+  const speed = 1 + (wave-1)*0.12;
+  for (let r=0; r<rows; r++) {
+    for (let i=0; i<cols; i++) {
+      enemies.push({ x: 70 + i*75, y: 55 + r*42, w: 56, h: 26, dx: speed, label: labels[(i+r)%labels.length] });
+    }
+  }
+  waveEl.textContent = `Wave: ${wave}`;
+}
+
+function drawStars(){
+  for(const s of stars){
+    s.y += 0.2 * s.z;
+    if(s.y > c.height){ s.y = -2; s.x = Math.random()*c.width; }
+    ctx.fillStyle = `rgba(170, 200, 255, ${0.25 + s.z*0.35})`;
+    ctx.fillRect(s.x, s.y, s.z*1.6, s.z*1.6);
+  }
+}
+
+function glowRect(x,y,w,h,color,blur=14){
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = blur;
+  ctx.fillStyle = color;
+  ctx.fillRect(x,y,w,h);
+  ctx.restore();
+}
+
+function drawPlayer(){
+  const grad = ctx.createLinearGradient(player.x, player.y, player.x, player.y+player.h);
+  grad.addColorStop(0, '#90b4ff'); grad.addColorStop(1, '#4b7dff');
+  ctx.fillStyle = grad;
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+  glowRect(player.x+16, player.y-8, 12, 8, '#9cc0ff', 12);
+  ctx.fillStyle = '#b9d1ff';
+  ctx.fillRect(player.x+16, player.y-8, 12, 8);
+}
+
+function drawBullet(b){
+  glowRect(b.x, b.y, 4, 10, b.enemy ? '#ff93b2' : '#ffd166', 10);
+  ctx.fillStyle = b.enemy ? '#ff5d8f' : '#ffd166';
+  ctx.fillRect(b.x, b.y, 4, 10);
+}
+
+function drawEnemy(e){
+  const grad = ctx.createLinearGradient(e.x, e.y, e.x, e.y+e.h);
+  grad.addColorStop(0, '#ff7ca6'); grad.addColorStop(1, '#d74778');
+  ctx.fillStyle = grad;
+  ctx.fillRect(e.x, e.y, e.w, e.h);
+  ctx.strokeStyle = 'rgba(255,255,255,.14)';
+  ctx.strokeRect(e.x+.5, e.y+.5, e.w-1, e.h-1);
+  ctx.fillStyle = '#2e0f1f';
+  ctx.font = '10px sans-serif';
+  ctx.fillText(e.label, e.x+5, e.y+16);
+}
+
+function drawDrop(d){
+  glowRect(d.x, d.y, 16, 16, '#7cf6ad', 12);
+  ctx.fillStyle = '#7cf6ad';
+  ctx.fillRect(d.x, d.y, 16, 16);
+  ctx.fillStyle = '#123324';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('+', d.x+5, d.y+12);
+}
+
+function collide(a,b){
+  return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+}
+
+function reset(){
+  bullets=[]; drops=[]; score=0; lives=3; over=false; tick=0; wave=1;
+  player.x = c.width/2 - 22;
+  spawnWave();
+}
+
+spawnWave();
+
+window.addEventListener('keydown', e => {
+  keys[e.key.toLowerCase()] = true;
+  if (e.code === 'Space') e.preventDefault();
+  if (over && e.key.toLowerCase() === 'r') reset();
+});
+window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+function loop(){
+  tick++;
+  ctx.clearRect(0,0,c.width,c.height);
+
+  // subtle vignette bg
+  drawStars();
+  const vg = ctx.createRadialGradient(c.width/2, c.height/2, 80, c.width/2, c.height/2, 420);
+  vg.addColorStop(0, 'rgba(20,33,72,.08)'); vg.addColorStop(1, 'rgba(0,0,0,.45)');
+  ctx.fillStyle = vg; ctx.fillRect(0,0,c.width,c.height);
+
+  if(!over){
+    if((keys['arrowleft']||keys['a']) && player.x>0) player.x -= player.speed;
+    if((keys['arrowright']||keys['d']) && player.x+player.w<c.width) player.x += player.speed;
+
+    if((keys[' ']||keys['space']) && player.cooldown<=0){
+      bullets.push({x:player.x+player.w/2-2,y:player.y-10,w:4,h:10,dy:-8});
+      player.cooldown = 11;
+    }
+    if(player.cooldown>0) player.cooldown--;
+
+    bullets.forEach(b => b.y += b.dy);
+    bullets = bullets.filter(b => b.y > -20 && b.y < c.height+20);
+
+    let edge=false;
+    enemies.forEach(e=>{ e.x += e.dx; if(e.x<8 || e.x+e.w>c.width-8) edge=true; });
+    if(edge){
+      enemies.forEach(e=>{
+        e.dx *= -1;
+        e.y += 14;
+        if(e.y+e.h > player.y){ lives = 0; over = true; }
+      });
+    }
+
+    bullets.forEach(b=>{
+      enemies.forEach(e=>{
+        if(!e.dead && !b.enemy && collide(b,e)){
+          e.dead=true; b.y=-99; score+=10;
+          if(Math.random()<0.08) drops.push({x:e.x+20,y:e.y,w:16,h:16,dy:2});
+        }
+      });
+    });
+
+    enemies = enemies.filter(e=>!e.dead);
+    drops.forEach(d=>d.y += d.dy);
+    drops = drops.filter(d=>d.y < c.height+20);
+
+    drops.forEach(d=>{
+      if(collide({x:d.x,y:d.y,w:16,h:16}, player)){
+        d.y = 9999;
+        lives = Math.min(5, lives+1);
+      }
+    });
+
+    if(enemies.length===0){ wave++; spawnWave(); }
+
+    if(tick % Math.max(80, 120 - wave*4) === 0){
+      const shooter = enemies[Math.floor(Math.random()*enemies.length)];
+      if(shooter) bullets.push({x:shooter.x+shooter.w/2,y:shooter.y+shooter.h,w:4,h:10,dy:4,enemy:true});
+    }
+
+    bullets.forEach(b=>{
+      if(b.enemy && collide({x:b.x,y:b.y,w:4,h:10}, player)){
+        b.y = 9999;
+        lives--;
+        if(lives<=0) over = true;
+      }
+    });
+  }
+
+  // entities
+  drawPlayer(); bullets.forEach(drawBullet); enemies.forEach(drawEnemy); drops.forEach(drawDrop);
+
+  // score panel
+  ctx.fillStyle = 'rgba(9,14,34,.7)';
+  ctx.fillRect(10, 10, 130, 50);
+  ctx.fillStyle = '#dbe6ff';
+  ctx.font = '16px sans-serif';
+  ctx.fillText(`Score: ${score}`, 18, 30);
+  ctx.fillText(`Lives: ${'♥'.repeat(lives)}`, 18, 50);
+
+  if(over){
+    ctx.fillStyle='rgba(0,0,0,.58)';
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.textAlign = 'center';
+    ctx.fillStyle='#fff';
+    ctx.font='bold 42px sans-serif';
+    ctx.fillText('Inbox Overload!', c.width/2, 210);
+    ctx.font='20px sans-serif';
+    ctx.fillStyle='#cfe0ff';
+    ctx.fillText('Press R to restart', c.width/2, 248);
+    ctx.textAlign = 'left';
+  }
+
+  statusEl.textContent = over ? 'Inbox reached critical mass 🚨' : `Defend your focus time • Score ${score}`;
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
