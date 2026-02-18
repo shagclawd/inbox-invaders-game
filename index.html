@@ -2,198 +2,428 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Realtor Pipeline + Compliance Copilot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DealOS for Realtors — Pipeline + Compliance Copilot</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #111827;
-      --text: #e5e7eb;
-      --muted: #9ca3af;
-      --line: #1f2937;
-      --accent: #34d399;
-      --accent-dark: #065f46;
+      --bg: #000;
+      --panel: #0a0a0a;
+      --muted-panel: #111;
+      --text: #fafafa;
+      --muted: #a1a1aa;
+      --line: #262626;
+      --line-soft: #1a1a1a;
+      --accent: #fff;
+      --success: #22c55e;
+      --radius: 14px;
+      --max: 1040px;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
+
+    a { color: inherit; }
+
     .wrap {
-      max-width: 860px;
+      max-width: var(--max);
       margin: 0 auto;
-      padding: 28px 18px 56px;
+      padding: 24px 20px 72px;
     }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.7);
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .nav {
+      display: flex;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
     .pill {
       display: inline-block;
-      padding: 6px 10px;
+      border: 1px solid var(--line);
       border-radius: 999px;
+      padding: 6px 10px;
       font-size: 12px;
-      color: #a7f3d0;
-      background: #052e2b;
-      border: 1px solid #0f766e;
+      color: var(--muted);
+      margin-bottom: 14px;
     }
+
     h1 {
-      font-size: clamp(1.9rem, 4vw, 2.8rem);
-      line-height: 1.15;
-      margin: 12px 0 10px;
+      font-size: clamp(2rem, 5vw, 3.6rem);
+      line-height: 1.08;
+      margin: 0 0 14px;
+      letter-spacing: -0.04em;
+      max-width: 920px;
     }
-    h2 {
-      font-size: 1.3rem;
-      margin: 0 0 10px;
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.08rem;
+      max-width: 840px;
+      margin: 0;
     }
-    p, li { color: var(--muted); }
-    .lead { font-size: 1.08rem; max-width: 760px; }
-    .accent { color: var(--accent); }
+
+    .hero {
+      padding: 44px 0 26px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
     .cta-row {
+      margin-top: 22px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 18px;
     }
+
     .btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       text-decoration: none;
+      padding: 11px 14px;
       border-radius: 10px;
-      padding: 11px 15px;
+      border: 1px solid var(--line);
       font-weight: 600;
-      border: 1px solid transparent;
+      font-size: 14px;
     }
+
     .btn.primary {
-      background: var(--accent);
-      color: #052e2b;
+      background: #fff;
+      color: #000;
+      border-color: #fff;
     }
+
     .btn.secondary {
-      background: transparent;
-      border-color: #334155;
+      background: #000;
       color: var(--text);
     }
-    .section { margin-top: 28px; }
+
+    .section {
+      padding: 30px 0 0;
+    }
+
+    .section h2 {
+      margin: 0 0 12px;
+      font-size: 1.45rem;
+      letter-spacing: -0.02em;
+    }
+
+    .subtle {
+      color: var(--muted);
+      margin: 0;
+      max-width: 820px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
     .card {
-      background: var(--card);
+      background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius);
       padding: 16px;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1.02rem;
+      letter-spacing: -0.01em;
+    }
+
+    .price {
+      margin: 6px 0 10px;
+      font-size: 1.55rem;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+
+    .price small {
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.88rem;
+      margin-left: 6px;
+    }
+
+    ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+      color: var(--muted);
+    }
+
+    li { margin-bottom: 6px; }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .kpi .card {
+      background: var(--muted-panel);
+    }
+
+    .kpi b {
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
       margin-top: 12px;
     }
-    .price {
-      font-size: 1.45rem;
-      font-weight: 800;
-      color: #f9fafb;
-      margin: 6px 0 10px;
+
+    .faq-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 13px 14px;
+      background: #050505;
     }
-    .small { font-size: .92rem; color: var(--muted); }
-    ul { margin: 8px 0 0 18px; padding: 0; }
-    .grid { display: grid; gap: 12px; }
-    @media (min-width: 860px) {
-      .grid.pricing { grid-template-columns: 1fr 1fr; }
+
+    .faq-item h4 {
+      margin: 0 0 6px;
+      font-size: 0.98rem;
     }
+
+    .faq-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .model {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .model h3 {
+      margin: 0 0 8px;
+      font-size: 1.06rem;
+    }
+
     .mono {
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      color: #cbd5e1;
+      font-size: 0.9rem;
+      color: #d4d4d8;
       word-break: break-all;
     }
-    .footer {
-      margin-top: 34px;
-      font-size: .9rem;
-      color: #6b7280;
+
+    .foot {
+      margin-top: 30px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-soft);
+      color: #71717a;
+      font-size: 0.9rem;
+    }
+
+    @media (min-width: 860px) {
+      .grid.two { grid-template-columns: 1fr 1fr; }
+      .grid.three { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .nav { display: none; }
+      .kpi { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <span class="pill">For solo realtors + small teams</span>
-    <h1><span class="accent">Realtor Pipeline + Compliance Copilot</span></h1>
-    <p class="lead">
-      I help you close more deals by fixing the two places most revenue leaks: <strong>slow lead follow-up</strong> and <strong>missed transaction deadlines</strong>.
-      This is not another dashboard. It’s an operated system you can rely on every week.
-    </p>
-
-    <div class="cta-row">
-      <a class="btn primary" href="#next">Start Pilot Setup</a>
-      <a class="btn secondary" href="#next">Book a 15-min Workflow Audit</a>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">DealOS for Realtors</div>
+      <nav class="nav">
+        <a href="#offer">Offer</a>
+        <a href="#model">Business model</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#next">Start</a>
+      </nav>
     </div>
+  </header>
 
-    <section class="section">
-      <h2>What you get</h2>
-      <div class="card">
+  <main class="wrap">
+    <section class="hero">
+      <span class="pill">For solo agents + small realtor teams</span>
+      <h1>Your listings don’t lose money because of effort.<br/>They lose money because follow-up and deadlines leak.</h1>
+      <p class="lead">
+        <strong>DealOS</strong> is an outcomes-first operator service: we run your lead pipeline and compliance cadence so you close more, miss less, and stop relying on memory.
+        You keep your CRM. We add the operating layer that actually gets used.
+      </p>
+      <div class="cta-row">
+        <a class="btn primary" href="#next">Start pilot</a>
+        <a class="btn secondary" href="#next">Book 15‑min workflow audit</a>
+      </div>
+
+      <div class="kpi">
+        <div class="card"><b>&lt; 5 min</b><span class="subtle">target speed-to-lead response pattern</span></div>
+        <div class="card"><b>7/14/30</b><span class="subtle">follow-up cadence that doesn’t rely on memory</span></div>
+        <div class="card"><b>0 missed</b><span class="subtle">critical timeline events as default operating target</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="offer">
+      <h2>What we actually do each week</h2>
+      <p class="subtle">Not “install a bot and disappear.” We run an operating cadence around your real pipeline.</p>
+      <div class="grid two">
+        <div class="card">
+          <h3>1) Pipeline Operating Layer</h3>
+          <ul>
+            <li>Lead intake normalization from forms, portals, DMs, and referrals</li>
+            <li>Response templates by lead intent (buyer, seller, investor, relocation)</li>
+            <li>Follow-up orchestration across SMS/email at 7/14/30-day checkpoints</li>
+            <li>Lead temperature tagging with next-best action prompts</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>2) Compliance & Timeline Layer</h3>
+          <ul>
+            <li>Transaction milestone tracking (inspection, appraisal, contingencies, signatures)</li>
+            <li>Gentle nudge → hard alarm escalation model for high-risk deadlines</li>
+            <li>At-risk deal surfacing before deadlines are breached</li>
+            <li>Weekly reliability review and checklist tuning</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="model">
+      <h2>Business model (clear and scalable)</h2>
+      <p class="subtle">Designed to beat “DIY setup” by combining recurring outcomes + template leverage.</p>
+      <div class="model">
+        <h3>Phase 1: Productized Service (cash now)</h3>
         <ul>
-          <li>Speed-to-lead workflow (inquiry response in minutes, not hours)</li>
-          <li>7 / 14 / 30-day follow-up cadence (SMS + email templates)</li>
-          <li>Transaction timeline reminders (inspection, appraisal, contingencies, signatures)</li>
-          <li>At-risk deal alerts so important steps don’t slip</li>
-          <li>Weekly tuning so the system keeps working as your pipeline changes</li>
+          <li><strong>Setup fee</strong> covers implementation and initial customization</li>
+          <li><strong>Monthly retainer</strong> covers weekly operation and tuning</li>
+          <li>Goal: predictable MRR from 5–10 agents before adding software layer</li>
+        </ul>
+      </div>
+      <div class="model">
+        <h3>Phase 2: Vertical Toolkit (scale)</h3>
+        <ul>
+          <li>Convert repeated workflows into packaged templates/checklists</li>
+          <li>License “DealOS playbooks” to broker teams as add-on</li>
+          <li>Use templates to reduce delivery time and increase margin</li>
+        </ul>
+      </div>
+      <div class="model">
+        <h3>Phase 3: Lightweight SaaS Layer (optional)</h3>
+        <ul>
+          <li>Unified deadline board + follow-up health score</li>
+          <li>Escalation engine + weekly operational report</li>
+          <li>Hybrid model: software subscription + managed operations</li>
         </ul>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="pricing">
       <h2>Simple pricing</h2>
-      <div class="grid pricing">
-        <div class="card">
+      <p class="subtle">Start with pilot pricing, then move to full plan after first month.</p>
+      <div class="grid three">
+        <article class="card">
           <h3>Pilot (first 3 clients)</h3>
           <div class="price">$149 setup + $149/mo</div>
           <ul>
-            <li>48-hour setup</li>
-            <li>Core lead follow-up system</li>
-            <li>Core compliance reminder system</li>
-            <li>Includes weekly check + optimization</li>
+            <li>48-hour launch</li>
+            <li>Core pipeline + compliance setup</li>
+            <li>Weekly operations check-in</li>
+            <li>In exchange for testimonial + baseline metrics</li>
           </ul>
-          <p class="small">Best if you want a fast start and are open to giving a testimonial.</p>
-        </div>
-
-        <div class="card">
+        </article>
+        <article class="card">
           <h3>Starter</h3>
           <div class="price">$299 setup + $199/mo</div>
           <ul>
-            <li>Everything in Pilot, expanded for your full workflow</li>
-            <li>Open house + listing inquiry playbooks</li>
-            <li>Custom follow-up messaging style</li>
-            <li>Priority support</li>
+            <li>Everything in Pilot</li>
+            <li>Custom messaging and segmentation</li>
+            <li>Open house + listing inquiry variants</li>
+            <li>Priority turnaround on changes</li>
           </ul>
-          <p class="small">Best if you already have active leads and want tighter execution now.</p>
+        </article>
+        <article class="card">
+          <h3>Pro Team</h3>
+          <div class="price">$599 setup + $499/mo</div>
+          <ul>
+            <li>For 2–5 person teams</li>
+            <li>Team accountability routing</li>
+            <li>At-risk deal feed + monthly ops review</li>
+            <li>Higher-volume workflow tuning</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="stack">
+        <div class="faq-item">
+          <h4>How is this different from me setting up my own AI assistant?</h4>
+          <p>DIY gives you tools. We provide operating ownership: cadence design, maintenance, escalation logic, and weekly tuning around your actual deals.</p>
         </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>How it works</h2>
-      <div class="card">
-        <ol>
-          <li><strong>Audit (15 min):</strong> We identify where leads or deadlines are leaking.</li>
-          <li><strong>Build (48h):</strong> I set up your pipeline and compliance workflows.</li>
-          <li><strong>Run:</strong> You use it daily; I tune it weekly for reliability and results.</li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Who this is for</h2>
-      <div class="card">
-        <ul>
-          <li>Solo agents who are great with clients but stretched thin operationally</li>
-          <li>Small teams that have tools but inconsistent follow-through</li>
-          <li>Realtors who want fewer dropped balls without hiring full-time ops staff</li>
-        </ul>
+        <div class="faq-item">
+          <h4>Do I need to switch CRM?</h4>
+          <p>No. We layer on top of what you already use and tighten execution where revenue leaks happen.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How fast can this go live?</h4>
+          <p>Pilot setups launch in 48 hours once intake is complete.</p>
+        </div>
       </div>
     </section>
 
     <section class="section" id="next">
-      <h2>Next step</h2>
+      <h2>Start here</h2>
       <div class="card">
         <ul>
           <li>Pilot payment link: <span class="mono">https://buy.stripe.com/YOUR_LINK</span></li>
-          <li>Booking link: <span class="mono">https://cal.com/YOUR_LINK</span></li>
+          <li>Workflow audit booking: <span class="mono">https://cal.com/YOUR_LINK</span></li>
           <li>Intake form: <span class="mono">https://tally.so/r/YOUR_FORM</span></li>
           <li>Contact: <span class="mono">you@example.com</span></li>
         </ul>
       </div>
     </section>
 
-    <p class="footer">Built for one thing: more closed deals, less operational chaos.</p>
+    <p class="foot">DealOS for Realtors — outcomes first: tighter follow-up, fewer misses, more closed deals.</p>
   </main>
 </body>
 </html>
