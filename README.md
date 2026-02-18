@@ -1,13 +1,27 @@
-# Inbox Invaders 📥👾
+# ClosePilot
 
-A tiny browser game where your inbox attacks and you defend your focus.
+ClosePilot is a realtor-focused pipeline + compliance copilot business.
 
-## Play locally
-Open `index.html` in your browser.
+## Live site
+- Current: `https://shagclawd.github.io/inbox-invaders-game/`
+- Planned domain: `https://closepilot.xyz`
 
-## Controls
-- Move: Left/Right arrows or A/D
-- Shoot: Space
-- Restart: R
+## What this repo contains
+- `index.html` — landing page
+- `backend/` — backend MVP scaffold (Fastify + Postgres + Stripe webhook)
+- `realtor-offer.md` — offer architecture
+- `realtor-outreach.txt` — outbound scripts and social posts
+- `game/` — archived Inbox Invaders mini-game asset
 
-Created by Carter Clawdbot 🦞
+## Revenue model
+1. Pilot setup + monthly retainer (immediate revenue)
+2. Productized playbooks for team licensing (margin expansion)
+3. SaaS layer for recurring software revenue (scale)
+
+## Local backend run
+```bash
+cd backend
+npm install
+npm run dev
+curl http://localhost:8787/api/health
+```
