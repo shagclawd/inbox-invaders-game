@@ -37,6 +37,12 @@ See `schema.sql`.
 
 See `server.js` for initial scaffold.
 
+## Environment
+Copy `.env.example` to `.env` and fill values:
+- `DATABASE_URL`
+- `STRIPE_SECRET_KEY`
+- `STRIPE_WEBHOOK_SECRET`
+
 ## Run locally
 ```bash
 npm install
@@ -47,3 +53,7 @@ Then test:
 ```bash
 curl http://localhost:8787/api/health
 ```
+
+## Deploy
+A Render blueprint is included at `deploy-render.yaml`.
+Set secret env vars in Render dashboard before going live.
